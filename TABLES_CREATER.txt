@@ -1,0 +1,20 @@
+USE rarus_tj_analyzer_2;
+go
+CREATE TABLE TLOCK(
+       EventID    int NOT NULL CONSTRAINT Lock_EventID PRIMARY KEY IDENTITY,
+       event_datetime       DATETIME2,
+       duration       INT,
+       event        VARCHAR(20),
+       event_level     INT,
+       process         VARCHAR(20),
+       processName     VARCHAR(50) NULL,
+       clientID     INT NULL,
+       applicationName     VARCHAR(100) NULL,
+       computerName     VARCHAR(100) NULL,
+       connectID     INT NULL,
+       SessionID     INT NULL,
+       Usr     VARCHAR(100) NULL,
+       Regions     VARCHAR(200) NULL,
+       Locks     VARCHAR(MAX) NULL,
+       WaitConnections    INT NULL,
+       Context     VARCHAR(MAX) NULL)
