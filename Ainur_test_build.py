@@ -19,6 +19,7 @@ dbCursor = connection.cursor()
 '''Предыдущий час в формате даты и строки: 22040515'''
 last_hour_date = datetime.today()-timedelta(hours=1)
 last_hour_date_str = datetime.strftime(last_hour_date, '%y%m%d%H')
+last_hour_date_str = '22040223'
 
 '''Поиск файлов ТЖ'''
 tj_paths = []
