@@ -19,7 +19,7 @@ dbCursor = connection.cursor()
 '''Предыдущий час в формате даты и строки: 22040515'''
 last_hour_date = datetime.today()-timedelta(hours=1)
 last_hour_date_str = datetime.strftime(last_hour_date, '%y%m%d%H')
-last_hour_date_str = '22040223'
+last_hour_date_str = '22032815'
 
 '''Поиск файлов ТЖ'''
 tj_paths = []
@@ -112,7 +112,7 @@ def Locks_forming():
 '''Формирование номера блокируемого сеанса'''
 def WaitConnections_forming():
     WaitConnections_finder = ''.join(re.findall('WaitConnections=(.*?),', pars_str))
-    WaitConnections.append(WaitConnections_finder)
+    WaitConnections.append(WaitConnections_finder.strip("'"))
 '''Формирование контекста'''
 def Context_forming():
     Context_finder = ''.join(re.findall('Context=\'(.*?)\'', pars_str))
@@ -128,7 +128,7 @@ for one_path in files_path:
         file_open = open(one_path, encoding='utf-8')
         file_read = file_open.read()
         one_string = re.sub('\t*|\n*|\r*', '', file_read)
-        split_one_string = re.split("(\d+:\d+.\d*?-)", one_string)
+        split_one_string = re.split("(\d{2}:\d+.\d*?-)", one_string)
         del split_one_string[0]
         len_string = len(split_one_string) - 1
 

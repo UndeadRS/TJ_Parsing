@@ -113,7 +113,7 @@ def Locks_forming():
 '''Формирование номера блокируемого сеанса'''
 def WaitConnections_forming():
     WaitConnections_finder = ''.join(re.findall('WaitConnections=(.*?),', pars_str))
-    WaitConnections.append(WaitConnections_finder)
+    WaitConnections.append(WaitConnections_finder.strip("'"))
 '''Формирование контекста'''
 def Context_forming():
     Context_finder = ''.join(re.findall('Context=\'(.*?)\'', pars_str))
@@ -129,7 +129,7 @@ for one_path in files_path:
         file_open = open(one_path, encoding='utf-8')
         file_read = file_open.read()
         one_string = re.sub('\t*|\n*|\r*', '', file_read)
-        split_one_string = re.split("(\d+:\d+.\d*?-)", one_string)
+        split_one_string = re.split("(\d{2}:\d+.\d*?-)", one_string)
         del split_one_string[0]
         len_string = len(split_one_string) - 1
 
@@ -174,6 +174,19 @@ len_string = len(event_datetime) - 1
 n = 0
 
 while n <= len_string:
+    print(event_datetime[n],duration[n],
+    event[n],
+    event_level[n],
+    process[n],
+    processName[n],
+    clientID[n],
+    applicationName [n],
+    computerName[n],
+    connectID[n],
+    SessionID[n],
+    Usr[n],
+    DeadlockConnectionIntersections[n],
+    Regions[n],Context[n])
     if event[n] == 'TLOCK':
         dbCursor.execute(f"INSERT INTO TLOCK(event_datetime,duration,event,event_level,process,processName,clientID,\
         applicationName,computerName,connectID,SessionID,Usr,Regions,Locks,\
