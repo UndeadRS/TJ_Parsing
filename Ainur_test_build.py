@@ -1,5 +1,3 @@
-'''XUIdggAINURaлддлsdasdasdsd'''
-'''Я смог закоммититлллль'''
 '''
 1. Получаем список файлов для парсинга
 2. Поочередное чтение каждого файла
@@ -14,7 +12,7 @@ import pyodbc
 from datetime import timedelta, datetime
 
 '''Подключение к СУБД'''
-connectionString = ("Driver={ODBC Driver 17 for SQL Server};""Server=AINIRKORS-PC;""Database=rarus_tj_analyzer_2;""Trusted_Connection=yes")
+connectionString = ("Driver={ODBC Driver 17 for SQL Server};""Server=AINURKORS-PC;""Database=rarus_tj_analyzer_2;""Trusted_Connection=yes")
 connection = pyodbc.connect(connectionString, autocommit=True)
 dbCursor = connection.cursor()
 
