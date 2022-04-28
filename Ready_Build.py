@@ -174,19 +174,6 @@ len_string = len(event_datetime) - 1
 n = 0
 
 while n <= len_string:
-    print(event_datetime[n],duration[n],
-    event[n],
-    event_level[n],
-    process[n],
-    processName[n],
-    clientID[n],
-    applicationName [n],
-    computerName[n],
-    connectID[n],
-    SessionID[n],
-    Usr[n],
-    DeadlockConnectionIntersections[n],
-    Regions[n],Context[n])
     if event[n] == 'TLOCK':
         dbCursor.execute(f"INSERT INTO TLOCK(event_datetime,duration,event,event_level,process,processName,clientID,\
         applicationName,computerName,connectID,SessionID,Usr,Regions,Locks,\
