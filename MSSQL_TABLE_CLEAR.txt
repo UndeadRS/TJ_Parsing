@@ -1,0 +1,4 @@
+USE rarus_tj_analyzer_2;
+GO
+TRUNCATE TABLE TLOCK;
+GO
