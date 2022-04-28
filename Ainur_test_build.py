@@ -14,7 +14,7 @@ import pyodbc
 from datetime import timedelta, datetime
 
 '''Подключение к СУБД'''
-connectionString = ("Driver={ODBC Driver 17 for SQL Server};""Server=TESTSQL;""Database=rarus_tj_analyzer_2;""Trusted_Connection=yes")
+connectionString = ("Driver={ODBC Driver 17 for SQL Server};""Server=AINIRKORS-PC;""Database=rarus_tj_analyzer_2;""Trusted_Connection=yes")
 connection = pyodbc.connect(connectionString, autocommit=True)
 dbCursor = connection.cursor()
 
@@ -24,7 +24,7 @@ last_hour_date_str = datetime.strftime(last_hour_date, '%y%m%d%H')
 
 '''Поиск файлов ТЖ'''
 tj_paths = []
-path_generator = os.walk(r"J:\1C\TJ_82\production_upp")
+path_generator = os.walk(r"D:\TJ\TJ_FULL")
 for pars_str in path_generator:
     tj_paths.append(pars_str)
 
