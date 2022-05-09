@@ -57,89 +57,139 @@ WaitConnections = []
 Context = []
 
 '''Формирование даты'''
+
+
 def date_forming():
     pre_min_sec_mikrosec = ''.join(re.findall("(\d+:\d+.\d*?)-", time_duration))
     pre_year_mouth_day_hour = datetime.strftime(last_hour_date, '%Y-%m-%d %H:')
     filedate = pre_year_mouth_day_hour + pre_min_sec_mikrosec
     event_datetime.append(filedate)
 
+
 '''Формирование длительности'''
+
+
 def duration_forming():
     duration.append(re.split('-', time_duration)[1])
 
+
 '''Формирование события'''
+
+
 def event_forming():
     event.append(split_str[1])
 
+
 '''Формирование уровня события'''
+
 
 def eventlevel_forming():
     event_level.append(split_str[2])
 
+
 '''Формирование процесса'''
+
+
 def process_forming():
     process_finder = ''.join(re.findall('process=(.*?),', pars_str))
     process.append(process_finder)
 
+
 '''Формирование имени процесса'''
+
+
 def processName_forming():
     processName_finder = ''.join(re.findall('processName=(.*?),', pars_str))
     processName.append(processName_finder)
 
+
 '''Формирование номера TCP соединения'''
+
+
 def clientID_forming():
     clientID_finder = ''.join(re.findall('clientID=(.*?),', pars_str))
     clientID.append(clientID_finder)
 
+
 '''Формирование имени приложения'''
+
+
 def applicationName_forming():
     applicationName_finder = ''.join(re.findall('applicationName=(.*?),', pars_str))
     applicationName.append(applicationName_finder)
 
+
 '''Формирование имени компьютера'''
+
+
 def computerName_forming():
     computerName_finder = ''.join(re.findall('computerName=(.*?),', pars_str))
     computerName.append(computerName_finder)
 
+
 '''Формирование номера соединения с ИБ'''
+
+
 def connectID_forming():
     connectID_finder = ''.join(re.findall('connectID=(.*?),', pars_str))
     connectID.append(connectID_finder)
 
+
 '''Формирование номера сеанса'''
+
+
 def SessionID_forming():
     SessionID_finder = ''.join(re.findall('SessionID=(.*?),', pars_str))
     SessionID.append(SessionID_finder)
 
+
 '''Формирование имени пользователя'''
+
+
 def Usr_forming():
     Usr_finder = ''.join(re.findall('Usr=(.*?),', pars_str))
     Usr.append(Usr_finder)
 
+
 '''Формирование таблицы блокировки'''
+
+
 def Regions_forming():
     Regions_finder = ''.join(re.findall('Regions=(.*?),', pars_str))
     Regions.append(Regions_finder)
 
+
 '''Формирование полей блокировок'''
+
+
 def Locks_forming():
     Locks_finder = ''.join(re.findall('Locks=(.*?),', pars_str))
     Locks.append(Locks_finder.strip("'"))
 
+
 '''Формирование номера блокируемого сеанса'''
+
+
 def WaitConnections_forming():
     WaitConnections_finder = ''.join(re.findall('WaitConnections=(.*?),', pars_str))
     WaitConnections.append(WaitConnections_finder.strip("'"))
 
+
 '''Формирование контекста'''
+
+
 def Context_forming():
     Context_finder = ''.join(re.findall('Context=\'(.*?)\'', pars_str))
     Context.append(Context_finder.strip("'"))
 
+
 '''Формирование описания Дедлока'''
+
+
 def DeadlockConnectionIntersections_forming():
     DeadlockConnectionIntersections_finder = ''.join(re.findall('DeadlockConnectionIntersections=(.*?),', pars_str))
     DeadlockConnectionIntersections.append(DeadlockConnectionIntersections_finder)
+
 
 for one_path in files_path:
     if 'TJ_NOTLOCK' in one_path:
