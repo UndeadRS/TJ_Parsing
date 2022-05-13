@@ -3,6 +3,14 @@ import re
 import pyodbc
 from datetime import timedelta, datetime
 
+'''Подключение к SQL'''
+Driver = 'ODBC Driver 17 for SQL Server'
+Server = 'TESTSQL'
+Database = 'rarus_tj_analyzer_2'
+connection_string = 'Driver={' + Driver + '};Server=' + Server + ';Database=' + Database + ';Trusted_Connection=yes'
+connection = pyodbc.connect(connection_string, autocommit=True)
+dbCursor = connection.cursor()
+
 '''Принт метрик для тестирования'''
 def Data_test():
 
@@ -166,18 +174,9 @@ def Interface_forming(pars_str):
     Interface_finder = ''.join(re.findall('Interface=(.*?),', pars_str))
     Interface.append(Interface_finder)
 
-'''Подключение к SQL, парсинг и загрузка данных'''
-def SQL_connetion():
-    Driver = 'ODBC Driver 17 for SQL Server'
-    Server = 'TESTSQL'
-    Database = 'rarus_tj_analyzer_2'
-    connection_string = 'Driver={' + Driver + '};Server=' + Server + ';Database=' + Database + ';Trusted_Connection=yes'
-    connection = pyodbc.connect(connection_string, autocommit=True)
-    dbCursor = connection.cursor()
+'''Парсинг и загрузка данных'''
 
 def CALL_Parsing():
-
-    SQL_connetion()
 
     for one_path in TJ_CALL:
 
@@ -268,8 +267,6 @@ def CALL_Parsing():
     Method.clear()
     Interface.clear()
 def NOTLOCKS_Parsing():
-
-    SQL_connetion()
 
     for one_path in TJ_NOTLOCK:
 
