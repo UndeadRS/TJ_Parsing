@@ -6,9 +6,11 @@ from datetime import timedelta, datetime
 def Data_test():
 
     len_string = len(event_datetime) - 1
+
     n = 0
 
     while n <= len_string:
+
         print(event_datetime[n],
               duration[n],
               event[n],
@@ -29,13 +31,12 @@ def Data_test():
 
         n += 1
 
-# '''Подключение к СУБД'''
-# Server = 'TESTSQL'
-# Database = 'rarus_tj_analyzer_2'
-# connectionString = 'Driver={ODBC Driver 17 for SQL Server};Server=' + Server + \
-#                    ';Database=' + Database + ';Trusted_Connection=yes'
-# connection = pyodbc.connect(connectionString, autocommit=True)
-# dbCursor = connection.cursor()
+Driver = 'ODBC Driver 17 for SQL Server'
+Server = 'TESTSQL'
+Database = 'rarus_tj_analyzer_2'
+connection_string = 'Driver={' + Driver + '};Server=' + Server + ';Database=' + Database + ';Trusted_Connection=yes'
+connection = pyodbc.connect(connection_string, autocommit=True)
+dbCursor = connection.cursor()
 
 '''Предыдущий час в формате даты и строки: 22040515'''
 last_hour_date = datetime.today() - timedelta(hours=1)
@@ -255,30 +256,30 @@ def CALL_Parsing():
 
         file_open.close()
 
-    # '''Выгрузка в СУБД'''
-    # len_string = len(event_datetime) - 1
-    # n = 0
-    #
-    # while n <= len_string:
-    #
-    #     if event[n] == 'TLOCK':
-    #         dbCursor.execute(f"INSERT INTO TLOCK(event_datetime,duration,event,event_level,process,processName,clientID,\
-    #         applicationName,computerName,connectID,SessionID,Usr,Regions,Locks,\
-    #         WaitConnections, Context)\
-    #         VALUES (N'{event_datetime[n]}',N'{duration[n]}',N'{event[n]}',N'{event_level[n]}',N'{process[n]}',\
-    #         N'{processName[n]}',N'{clientID[n]}',N'{applicationName[n]}',N'{computerName[n]}',N'{connectID[n]}',\
-    #         N'{SessionID[n]}',N'{Usr[n]}',N'{Regions[n]}',N'{Locks[n]}',\
-    #         N'{WaitConnections[n]}',N'{Context[n]}')")
-    #     elif event[n] == 'TTIMEOUT':
-    #         dbCursor.execute(f"INSERT INTO TTIMEOUT(event_datetime,event,event_level,process,processName,clientID,\
-    #         applicationName,computerName,connectID,SessionID,Usr,WaitConnections,Context)\
-    #         VALUES (N'{event_datetime[n]}',N'{event[n]}',N'{event_level[n]}',N'{process[n]}',\
-    #         N'{processName[n]}',N'{clientID[n]}',N'{applicationName[n]}',N'{computerName[n]}',N'{connectID[n]}',\
-    #         N'{SessionID[n]}',N'{Usr[n]}',N'{WaitConnections[n]}',N'{Context[n]}')")
-    #
-    #     n += 1
-    #
-    # pyodbc.pooling = False
+    '''Выгрузка в СУБД'''
+    len_string = len(event_datetime) - 1
+    n = 0
+
+    while n <= len_string:
+
+        if event[n] == 'TLOCK':
+            dbCursor.execute(f"INSERT INTO TLOCK(event_datetime,duration,event,event_level,process,processName,clientID,\
+            applicationName,computerName,connectID,SessionID,Usr,Regions,Locks,\
+            WaitConnections, Context)\
+            VALUES (N'{event_datetime[n]}',N'{duration[n]}',N'{event[n]}',N'{event_level[n]}',N'{process[n]}',\
+            N'{processName[n]}',N'{clientID[n]}',N'{applicationName[n]}',N'{computerName[n]}',N'{connectID[n]}',\
+            N'{SessionID[n]}',N'{Usr[n]}',N'{Regions[n]}',N'{Locks[n]}',\
+            N'{WaitConnections[n]}',N'{Context[n]}')")
+        elif event[n] == 'TTIMEOUT':
+            dbCursor.execute(f"INSERT INTO TTIMEOUT(event_datetime,event,event_level,process,processName,clientID,\
+            applicationName,computerName,connectID,SessionID,Usr,WaitConnections,Context)\
+            VALUES (N'{event_datetime[n]}',N'{event[n]}',N'{event_level[n]}',N'{process[n]}',\
+            N'{processName[n]}',N'{clientID[n]}',N'{applicationName[n]}',N'{computerName[n]}',N'{connectID[n]}',\
+            N'{SessionID[n]}',N'{Usr[n]}',N'{WaitConnections[n]}',N'{Context[n]}')")
+
+        n += 1
+
+    pyodbc.pooling = False
 
     '''Очистка массивов с данными после выгрузки в СУБД'''
     event_datetime.clear()
