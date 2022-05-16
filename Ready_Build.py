@@ -88,6 +88,31 @@ for address, dirs, files in tj_paths:
                 if 'TJ_SDBL' in address:
                     TJ_SDBL.append(address + '\\' + file)
 
+    '''Очистка массивов с данными после выгрузки в СУБД'''
+def clear_array():
+    event_datetime.clear()
+    duration.clear()
+    event.clear()
+    event_level.clear()
+    process.clear()
+    processName.clear()
+    clientID.clear()
+    applicationName.clear()
+    computerName.clear()
+    connectID.clear()
+    SessionID.clear()
+    Usr.clear()
+    Func.clear()
+    Module.clear()
+    Method.clear()
+    Interface.clear()
+    DeadlockConnectionIntersections.clear()
+    Regions.clear()
+    Locks.clear()
+    WaitConnections.clear()
+    Context.clear()
+
+
 
 '''Парсинг метрик'''
 def date_forming():
@@ -242,4 +267,5 @@ while n <= len_string:
         N'{SessionID[n]}',N'{Usr[n]}',N'{WaitConnections[n]}',N'{Context[n]}')")
 
     n += 1
+clear_array()
 pyodbc.pooling = False
