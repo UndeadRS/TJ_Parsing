@@ -199,6 +199,11 @@ def DeadlockConnectionIntersections_forming():
     DeadlockConnectionIntersections_finder = ''.join(re.findall('DeadlockConnectionIntersections=(.*?),', pars_str))
     DeadlockConnectionIntersections.append(DeadlockConnectionIntersections_finder)
 
+"""Формирование типа ошибки"""
+def process_forming():
+    process_finder = ''.join(re.findall('process=(.*?),', pars_str))
+    process.append(process_finder)
+
 for one_path in TJ_NOTLOCK:
     if 'TJ_NOTLOCK' in one_path:
 
@@ -268,4 +273,44 @@ while n <= len_string:
 
     n += 1
 clear_array()
+
+for one_path in TJ_ERR:
+        file_open = open(one_path, encoding='utf-8')
+        file_read = file_open.read()
+        one_string = re.sub('\t*|\n*|\r*', '', file_read)
+        split_one_string = re.split("(\d{2}:\d+.\d*?-)", one_string)
+        del split_one_string[0]
+        len_string = len(split_one_string) - 1
+
+        ready_file = []
+
+        n = 0
+
+        while n <= len_string:
+            if n == len_string:
+                ready_file.append(split_one_string[n])
+            else:
+                ready_file.append(split_one_string[n] + split_one_string[n + 1])
+            n += 2
+
+        for pars_str in ready_file:
+            split_str = re.split(',', pars_str)
+            time_duration = split_str[0]
+
+            """Формирование метрик для TJ_ERR"""
+            date_forming()
+            duration_forming()
+            event_forming()
+            eventlevel_forming()
+            process_forming()
+            processName_forming()
+            clientID_forming()
+            applicationName_forming()
+            computerName_forming()
+            connectID_forming()
+            SessionID_forming()
+            Usr_forming()
+
+
+
 pyodbc.pooling = False
