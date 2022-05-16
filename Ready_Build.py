@@ -19,25 +19,18 @@ connectionString = 'Driver={ODBC Driver 17 for SQL Server};Server=' + Server + \
 connection = pyodbc.connect(connectionString, autocommit=True)
 dbCursor = connection.cursor()
 
-'''Предыдущий час в формате даты и строки: 22040515'''
-last_hour_date = datetime.today() - timedelta(hours=1)
-last_hour_date_str = datetime.strftime(last_hour_date, '%y%m%d%H')
-
-'''Поиск файлов ТЖ'''
-tj_paths = []
-path_generator = os.walk(r"J:\1C\TJ_82\production_upp")
-for pars_str in path_generator:
-    tj_paths.append(pars_str)
-
 '''Формирование абсолютного пути файлов для парсинга'''
-files_path = []
-for address, dirs, files in tj_paths:
-    for file in files:
-        if last_hour_date_str in file:
-            result = os.path.getsize(address + '\\' + file)
-            if result > 3:
-                files_path.append(address + '\\' + file)
+TJ_CALL = []
+TJ_ADMIN = []
+TJ_DESIGNER = []
+TJ_ERR = []
+TJ_MEM = []
+TJ_MSSQL = []
+TJ_NOTLOCK = []
+TJ_SCALL = []
+TJ_SDBL = []
 
+'''Списки данных метрик'''
 event_datetime = []
 duration = []
 event = []
@@ -55,8 +48,48 @@ Regions = []
 Locks = []
 WaitConnections = []
 Context = []
+Func = []
+Module = []
+Method = []
+Interface = []
 
-'''Формирование даты'''
+'''Предыдущий час в формате даты и строки: 22040515'''
+last_hour_date = datetime.today() - timedelta(hours=1)
+last_hour_date_str = datetime.strftime(last_hour_date, '%y%m%d%H')
+
+'''Поиск файлов ТЖ'''
+tj_paths = []
+path_generator = os.walk(r"J:\1C\TJ_82\production_upp")
+for pars_str in path_generator:
+    tj_paths.append(pars_str)
+
+'''Формирование абсолютного пути файлов для парсинга'''
+for address, dirs, files in tj_paths:
+    for file in files:
+        if last_hour_date_str in file:
+            result = os.path.getsize(address + '\\' + file)
+            if result > 3:
+                if 'TJ_CALL' in address:
+                    TJ_CALL.append(address + '\\' + file)
+                if 'TJ_ADMIN' in address:
+                    TJ_ADMIN.append(address + '\\' + file)
+                if 'TJ_DESIGNER' in address:
+                    TJ_DESIGNER.append(address + '\\' + file)
+                if 'TJ_ERR' in address:
+                    TJ_ERR.append(address + '\\' + file)
+                if 'TJ_MEM' in address:
+                    TJ_MEM.append(address + '\\' + file)
+                if 'TJ_MSSQL' in address:
+                    TJ_MSSQL.append(address + '\\' + file)
+                if 'TJ_NOTLOCK' in address:
+                    TJ_NOTLOCK.append(address + '\\' + file)
+                if 'TJ_SCALL' in address:
+                    TJ_SCALL.append(address + '\\' + file)
+                if 'TJ_SDBL' in address:
+                    TJ_SDBL.append(address + '\\' + file)
+
+
+'''Парсинг метрик'''
 def date_forming():
     pre_min_sec_mikrosec = ''.join(re.findall("(\d+:\d+.\d*?)-", time_duration))
     pre_year_mouth_day_hour = datetime.strftime(last_hour_date, '%Y-%m-%d %H:')
@@ -141,7 +174,7 @@ def DeadlockConnectionIntersections_forming():
     DeadlockConnectionIntersections_finder = ''.join(re.findall('DeadlockConnectionIntersections=(.*?),', pars_str))
     DeadlockConnectionIntersections.append(DeadlockConnectionIntersections_finder)
 
-for one_path in files_path:
+for one_path in TJ_NOTLOCK:
     if 'TJ_NOTLOCK' in one_path:
 
         file_open = open(one_path, encoding='utf-8')
