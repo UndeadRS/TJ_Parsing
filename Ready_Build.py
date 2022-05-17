@@ -186,8 +186,12 @@ def Locks_forming():
 
 '''Формирование номера блокируемого сеанса'''
 def WaitConnections_forming():
-    WaitConnections_finder = ''.join(re.findall('WaitConnections=(.*?),', pars_str))
-    WaitConnections.append(WaitConnections_finder.strip("'"))
+    WaitConnections_finder = ''.join(re.findall('WaitConnections=\'(.*?)\'', pars_str))
+    if WaitConnections_finder == '':
+        WaitConnections_finder = ''.join(re.findall('WaitConnections=(.*?),', pars_str))
+    elif ''.join(re.findall('WaitConnections=(.*?),', pars_str)) =='':
+        WaitConnections_finder = ''.join(re.findall('WaitConnections=(.*)', pars_str))
+    WaitConnections.append(WaitConnections_finder)
 
 '''Формирование контекста'''
 def Context_forming():
