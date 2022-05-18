@@ -44,6 +44,11 @@ connectID = []
 SessionID = []
 Usr = []
 DeadlockConnectionIntersections = []
+deadlock_session_1 = []
+deadlock_session_2 = []
+deadlock_region = []
+deadlock_type = []
+deadlock_locks = []
 Regions = []
 Locks = []
 WaitConnections = []
@@ -111,7 +116,11 @@ def clear_array():
     Locks.clear()
     WaitConnections.clear()
     Context.clear()
-
+    deadlock_session_1.clear()
+    deadlock_session_2.clear()
+    deadlock_region.clear()
+    deadlock_type.clear()
+    deadlock_locks.clear()
 
 
 '''Парсинг метрик'''
@@ -201,7 +210,18 @@ def Context_forming():
 '''Формирование описания Дедлока'''
 def DeadlockConnectionIntersections_forming():
     DeadlockConnectionIntersections_finder = ''.join(re.findall('DeadlockConnectionIntersections=(.*?),', pars_str))
-    DeadlockConnectionIntersections.append(DeadlockConnectionIntersections_finder)
+    if re.search('TDEADLOCK',pars_str) == None:
+        deadlock_session_1.append('')
+        deadlock_session_2.append('')
+        deadlock_region.append('')
+        deadlock_type.append('')
+        deadlock_locks.append('')
+    else:
+        deadlock_session_1.append((re.split(' ',DeadlockConnectionIntersections_finder)[0]).strip("'"))
+        deadlock_session_2.append((re.split(' ',DeadlockConnectionIntersections_finder)[1]).strip("'"))
+        deadlock_region.append(re.split(' ',DeadlockConnectionIntersections_finder)[2])
+        deadlock_type.append(re.split(' ',DeadlockConnectionIntersections_finder)[3])
+        deadlock_locks.append(re.split(' ',DeadlockConnectionIntersections_finder,maxsplit=4)[4])
 
 for one_path in TJ_NOTLOCK:
     if 'TJ_NOTLOCK' in one_path:
@@ -269,6 +289,12 @@ while n <= len_string:
         VALUES (N'{event_datetime[n]}',N'{event[n]}',N'{event_level[n]}',N'{process[n]}',\
         N'{processName[n]}',N'{clientID[n]}',N'{applicationName[n]}',N'{computerName[n]}',N'{connectID[n]}',\
         N'{SessionID[n]}',N'{Usr[n]}',N'{WaitConnections[n]}',N'{Context[n]}')")
+    elif event[n] == 'TDEADLOCK':
+        dbCursor.execute(f"INSERT INTO TDEADLOCK(event_datetime,event,event_level,process,processName,clientID,\
+        applicationName,computerName,connectID,SessionID,Usr,deadlock_session_1,deadlock_session_2,deadlock_region,deadlock_type,deadlock_locks,Context)\
+        VALUES (N'{event_datetime[n]}',N'{event[n]}',N'{event_level[n]}',N'{process[n]}',\
+        N'{processName[n]}',N'{clientID[n]}',N'{applicationName[n]}',N'{computerName[n]}',N'{connectID[n]}',\
+        N'{SessionID[n]}',N'{Usr[n]}',N'{deadlock_session_1[n]}',N'{deadlock_session_2[n]}',N'{deadlock_region[n]}',N'{deadlock_type[n]}',N'{deadlock_locks[n]}',N'{Context[n]}')")
 
     n += 1
 clear_array()
