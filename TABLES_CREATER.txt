@@ -33,22 +33,22 @@ CREATE TABLE TTIMEOUT(
        Usr     VARCHAR(100) NULL,
        WaitConnections     VARCHAR(50) NULL,
        Context     VARCHAR(MAX) NULL)
-CREATE TABLE CALL(
-        EventID    int NOT NULL CONSTRAINT Call_EventID PRIMARY KEY IDENTITY,
-        event_datetime       DATETIME2,
-        duration    INT,
-        event        VARCHAR(20),
-        event_level     INT,
-        process         VARCHAR(20),
-        processName     VARCHAR(50) NULL,
-        ClientId     INT NULL,
-        applicationName     VARCHAR(100) NULL,
-        computerName     VARCHAR(100) NULL,
-        ConnectId     INT NULL,
-        SessionId     INT NULL,
-        Usr     VARCHAR(100) NULL,
-        Func Добить     INT NULL,
-        Module   Добить   VARCHAR(MAX) NULL
-        Method      INT NULL,
-        Interface  Добить
-        Context       VARCHAR(MAX) NULL)
+CREATE TABLE TDEADLOCK(
+         EventID    int NOT NULL CONSTRAINT Deadlock_EventID PRIMARY KEY IDENTITY,
+         event_datetime       DATETIME2,
+          event        VARCHAR(20),
+          event_level     INT,
+          process         VARCHAR(20),
+          processName     VARCHAR(50) NULL,
+          ClientId     INT NULL,
+          applicationName     VARCHAR(100) NULL,
+          computerName     VARCHAR(100) NULL,
+          ConnectId     INT NULL,
+          SessionId     INT NULL,
+          Usr     VARCHAR(100) NULL,
+          deadlock_session_1     INT NULL,
+          deadlock_session_2     INT NULL,
+          deadlock_region     VARCHAR(200) NULL,
+          deadlock_type     VARCHAR(50) NULL,
+          deadlock_locks     VARCHAR(MAX) NULL,
+          Context       VARCHAR(MAX) NULL)
