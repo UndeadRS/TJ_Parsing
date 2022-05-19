@@ -228,17 +228,15 @@ def open_file(one_path, ready_file):
 
     open_file.close()
 
+# Парсинг NOTLOCK
 def TJ_NOTLOCK_Pars():
     for one_path in TJ_NOTLOCK:
         ready_file = []
-
         open_file(one_path, ready_file)
 
         for pars_str in ready_file:
             split_str = re.split(',', pars_str)
             time_duration = split_str[0]
-
-            # Сбор метрик для NOTLOCK
             date_forming(time_duration)
             duration_forming(time_duration)
             event_forming(split_str)
@@ -259,7 +257,6 @@ def TJ_NOTLOCK_Pars():
 
     # Выгрузка в СУБД
     len_string = len(event_datetime) - 1
-
     n = 0
 
     while n <= len_string:
