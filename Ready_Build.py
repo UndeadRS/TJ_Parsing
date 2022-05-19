@@ -51,6 +51,7 @@ deadlock_type = []
 deadlock_locks = []
 Regions = []
 Locks = []
+lock_type = []
 WaitConnections = []
 Context = []
 Func = []
@@ -114,6 +115,7 @@ def clear_array():
     DeadlockConnectionIntersections.clear()
     Regions.clear()
     Locks.clear()
+    lock_type.clear()
     WaitConnections.clear()
     Context.clear()
     deadlock_session_1.clear()
@@ -190,8 +192,13 @@ def Regions_forming():
 
 '''Формирование полей блокировок'''
 def Locks_forming():
-    Locks_finder = ''.join(re.findall('Locks=(.*?),', pars_str))
-    Locks.append(Locks_finder.strip("'"))
+    Locks_finder = ''.join(re.findall('Locks=(.*?),', pars_str)).strip("'")
+    if re.search('TLOCK',pars_str) != None:
+        lock_type.append(re.split(' ', Locks_finder)[1])
+        Locks.append(re.sub(r'(\w+)[.](\w+)[ ](\w+)','',Locks_finder))
+    else:
+        lock_type.append('')
+        Locks.append('')
 
 '''Формирование номера блокируемого сеанса'''
 def WaitConnections_forming():
@@ -277,11 +284,11 @@ while n <= len_string:
 
     if event[n] == 'TLOCK':
         dbCursor.execute(f"INSERT INTO TLOCK(event_datetime,duration,event,event_level,process,processName,clientID,\
-        applicationName,computerName,connectID,SessionID,Usr,Regions,Locks,\
+        applicationName,computerName,connectID,SessionID,Usr,Regions,lock_type,Locks,\
         WaitConnections, Context)\
         VALUES (N'{event_datetime[n]}',N'{duration[n]}',N'{event[n]}',N'{event_level[n]}',N'{process[n]}',\
         N'{processName[n]}',N'{clientID[n]}',N'{applicationName[n]}',N'{computerName[n]}',N'{connectID[n]}',\
-        N'{SessionID[n]}',N'{Usr[n]}',N'{Regions[n]}',N'{Locks[n]}',\
+        N'{SessionID[n]}',N'{Usr[n]}',N'{Regions[n]}',N'{lock_type[n]}',N'{Locks[n]}',\
         N'{WaitConnections[n]}',N'{Context[n]}')")
     elif event[n] == 'TTIMEOUT':
         dbCursor.execute(f"INSERT INTO TTIMEOUT(event_datetime,event,event_level,process,processName,clientID,\

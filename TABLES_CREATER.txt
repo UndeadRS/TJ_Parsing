@@ -15,6 +15,7 @@ CREATE TABLE TLOCK(
        SessionID     INT NULL,
        Usr     VARCHAR(100) NULL,
        Regions     VARCHAR(200) NULL,
+       lock_type    VARCHAR(20),
        Locks     VARCHAR(MAX) NULL,
        WaitConnections    VARCHAR(50) NULL,
        Context     VARCHAR(MAX) NULL)
