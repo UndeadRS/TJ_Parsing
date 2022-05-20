@@ -4,7 +4,7 @@ import pyodbc
 from datetime import timedelta, datetime
 
 # Путь технологического журнала
-TJ_Path = r'J:\1C\TJ_82\production_upp'
+TJ_Path = r'C:\Users\user\Desktop\TJ_82'
 
 # Поиск файлов ТЖ
 tj_paths = []
@@ -13,8 +13,8 @@ for pars_str in path_generator:
     tj_paths.append(pars_str)
 
 # Подключение к СУБД
-Server = 'TESTSQL'
-Database = 'rarus_tj_analyzer_2'
+Server = 'DESKTOP-FB0HL91'
+Database = 'Undead'
 connection_string = 'Driver={ODBC Driver 17 for SQL Server};Server=' + Server + \
                     ';Database=' + Database + ';Trusted_Connection=yes'
 connection = pyodbc.connect(connection_string, autocommit=True)
@@ -22,8 +22,8 @@ dbCursor = connection.cursor()
 
 # Предыдущий час в формате даты и строки: 22040515
 date = datetime.today() - timedelta(hours=1)
-date_s = datetime.strftime(date, '%y%m%d%H')
-
+# date_s = datetime.strftime(date, '%y%m%d%H')
+date_s = '22031711'
 # Директории файлов событий
 TJ_CALL = []
 TJ_ADMIN = []
