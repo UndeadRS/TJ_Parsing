@@ -379,7 +379,7 @@ len_string = len(event_datetime) - 1
 """Добавить событие 'Context' в контекст ошибки"""
 n=0
 while n <= len_string:
-    if event[n] == 'EXCP' and event[n+1] == 'Context':
+    if event[n] == 'EXCP' and event[n+1] == 'Context' and SessionID[n] == SessionID[n+1]:
         Context[n]=Context[n]+'$$$'+Context[n+1]
     n += 1
 
