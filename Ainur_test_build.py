@@ -51,12 +51,16 @@ deadlock_type = []
 deadlock_locks = []
 Regions = []
 Locks = []
+lock_type = []
 WaitConnections = []
 Context = []
 Func = []
 Module = []
 Method = []
 Interface = []
+exception = []
+descr = []
+
 
 '''Предыдущий час в формате даты и строки: 22040515'''
 last_hour_date = datetime.today() - timedelta(hours=1)
@@ -115,6 +119,7 @@ def clear_array():
     DeadlockConnectionIntersections.clear()
     Regions.clear()
     Locks.clear()
+    lock_type.clear()
     WaitConnections.clear()
     Context.clear()
     deadlock_session_1.clear()
@@ -122,8 +127,8 @@ def clear_array():
     deadlock_region.clear()
     deadlock_type.clear()
     deadlock_locks.clear()
-
-
+    exception.clear()
+    descr.clear()
 
 '''Парсинг метрик'''
 def date_forming():
@@ -192,8 +197,13 @@ def Regions_forming():
 
 '''Формирование полей блокировок'''
 def Locks_forming():
-    Locks_finder = ''.join(re.findall('Locks=(.*?),', pars_str))
-    Locks.append(Locks_finder.strip("'"))
+    Locks_finder = ''.join(re.findall('Locks=(.*?),', pars_str)).strip("'")
+    if re.search('TLOCK',pars_str) != None:
+        lock_type.append(re.split(' ', Locks_finder)[1])
+        Locks.append(re.sub(r'(\w+)[.](\w+)[ ](\w+)','',Locks_finder))
+    else:
+        lock_type.append('')
+        Locks.append('')
 
 '''Формирование номера блокируемого сеанса'''
 def WaitConnections_forming():
@@ -203,7 +213,6 @@ def WaitConnections_forming():
     elif ''.join(re.findall('WaitConnections=(.*?),', pars_str)) =='':
         WaitConnections_finder = ''.join(re.findall('WaitConnections=(.*)', pars_str))
     WaitConnections.append(WaitConnections_finder)
-
 
 '''Формирование контекста'''
 def Context_forming():
@@ -220,23 +229,34 @@ def DeadlockConnectionIntersections_forming():
         deadlock_type.append('')
         deadlock_locks.append('')
     else:
-        # print('DeadlockConnectionIntersections_finder=',DeadlockConnectionIntersections_finder)
         deadlock_session_1.append((re.split(' ',DeadlockConnectionIntersections_finder)[0]).strip("'"))
         deadlock_session_2.append((re.split(' ',DeadlockConnectionIntersections_finder)[1]).strip("'"))
         deadlock_region.append(re.split(' ',DeadlockConnectionIntersections_finder)[2])
         deadlock_type.append(re.split(' ',DeadlockConnectionIntersections_finder)[3])
         deadlock_locks.append(re.split(' ',DeadlockConnectionIntersections_finder,maxsplit=4)[4])
-        print('deadlock_session_1=',deadlock_session_1)
-        print('deadlock_session_2=',deadlock_session_2)
-        print('deadlock_region=',deadlock_region)
-        print('deadlock_locks=',deadlock_locks)
+
+"""Формирование типа ошибки"""
+def exception_forming():
+    exception_finder = ''.join(re.findall('Exception=(.*?),', pars_str))
+    exception.append(exception_finder)
+
+"""Формирование описания ошибки"""
+def descr_forming():
+    exception_finder_for_descr = ''.join(re.findall('Exception=(.*?),', pars_str))
+    if  'Context=' in pars_str:
+        descr_finder = ''.join(re.findall('Descr=(.*?),', pars_str)).strip("'")
+    else:
+        descr_finder = ''.join(re.findall('Descr=(.*)', pars_str)).strip("'")
+    # Приведение Descr в читаемый вид
+    descr_finder=re.sub(exception_finder_for_descr,'',descr_finder)
+    descr_finder=re.sub(r'(s|S)rc\\(\w*).cpp(\s|\(\w*\))','',descr_finder)
+    descr_finder=re.sub(r'descr=','',descr_finder)
+    descr_finder=re.sub(r'\:\:','',descr_finder).strip()
+    descr.append(descr_finder)
 
 
-    # DeadlockConnectionIntersections.append(DeadlockConnectionIntersections_finder)
-    # print('DeadlockConnectionIntersections=',DeadlockConnectionIntersections)
 
-
-
+"""Формирование массивов блокировок"""
 for one_path in TJ_NOTLOCK:
     if 'TJ_NOTLOCK' in one_path:
 
@@ -283,34 +303,19 @@ for one_path in TJ_NOTLOCK:
 
         file_open.close()
 
-'''Выгрузка в СУБД'''
+'''Выгрузка в СУБД блокировок'''
 len_string = len(event_datetime) - 1
 n = 0
 
 while n <= len_string:
-    # print('event_datetime=',event_datetime[n])
-    # print('duration=',duration[n])
-    # print('event=',event[n])
-    # print('event_level=',event_level[n])
-    # print('process=',process[n])
-    # print('processName=',processName[n])
-    # print('clientID=',clientID[n])
-    # print('applicationName=',applicationName[n])
-    # print('computerName=',computerName[n])
-    # print('connectID=',connectID[n])
-    # print('SessionID=',SessionID[n])
-    # print('Usr=',Usr[n])
-    # print('Regions=',Regions[n])
-    # print('Locks=',Locks[n])
-    # print('WaitConnections=',WaitConnections[n])
-    # print('Context=',Context[n])
+
     if event[n] == 'TLOCK':
         dbCursor.execute(f"INSERT INTO TLOCK(event_datetime,duration,event,event_level,process,processName,clientID,\
-        applicationName,computerName,connectID,SessionID,Usr,Regions,Locks,\
+        applicationName,computerName,connectID,SessionID,Usr,Regions,lock_type,Locks,\
         WaitConnections, Context)\
         VALUES (N'{event_datetime[n]}',N'{duration[n]}',N'{event[n]}',N'{event_level[n]}',N'{process[n]}',\
         N'{processName[n]}',N'{clientID[n]}',N'{applicationName[n]}',N'{computerName[n]}',N'{connectID[n]}',\
-        N'{SessionID[n]}',N'{Usr[n]}',N'{Regions[n]}',N'{Locks[n]}',\
+        N'{SessionID[n]}',N'{Usr[n]}',N'{Regions[n]}',N'{lock_type[n]}',N'{Locks[n]}',\
         N'{WaitConnections[n]}',N'{Context[n]}')")
     elif event[n] == 'TTIMEOUT':
         dbCursor.execute(f"INSERT INTO TTIMEOUT(event_datetime,event,event_level,process,processName,clientID,\
@@ -326,6 +331,74 @@ while n <= len_string:
         N'{SessionID[n]}',N'{Usr[n]}',N'{deadlock_session_1[n]}',N'{deadlock_session_2[n]}',N'{deadlock_region[n]}',N'{deadlock_type[n]}',N'{deadlock_locks[n]}',N'{Context[n]}')")
 
     n += 1
+clear_array()
+
+
+"""Формирование массивов ошибок"""
+for one_path in TJ_ERR:
+    file_open = open(one_path, encoding='utf-8')
+    file_read = file_open.read()
+    one_string = re.sub('\t*|\n*|\r*', '', file_read)
+    split_one_string = re.split("(\d{2}:\d+.\d*?-)", one_string)
+    del split_one_string[0]
+    len_string = len(split_one_string) - 1
+
+    ready_file = []
+
+    n = 0
+
+    while n <= len_string:
+        if n == len_string:
+            ready_file.append(split_one_string[n])
+        else:
+            ready_file.append(split_one_string[n] + split_one_string[n + 1])
+        n += 2
+
+    for pars_str in ready_file:
+        split_str = re.split(',', pars_str)
+        time_duration = split_str[0]
+
+        """Формирование метрик для TJ_ERR"""
+        date_forming()
+        duration_forming()
+        event_forming()
+        eventlevel_forming()
+        process_forming()
+        processName_forming()
+        clientID_forming()
+        applicationName_forming()
+        computerName_forming()
+        connectID_forming()
+        SessionID_forming()
+        Usr_forming()
+        exception_forming()
+        descr_forming()
+        Context_forming()
+    file_open.close()
+
+len_string = len(event_datetime) - 1
+
+"""Добавить событие 'Context' в контекст ошибки"""
+n=0
+while n <= len_string:
+    if event[n] == 'EXCP' and event[n+1] == 'Context':
+        Context[n]=Context[n]+'$$$'+Context[n+1]
+    n += 1
+
+
+"""Выгрузка в СУБД ошибок"""
+n=0
+while n <= len_string:
+
+    if event[n] != 'Context':
+        dbCursor.execute(f"INSERT INTO ERR(event_datetime,duration,event,event_level,process,processName,clientID,\
+        applicationName,computerName,connectID,SessionID,Usr,Exception,Descr,Context)\
+        VALUES (N'{event_datetime[n]}',N'{duration[n]}',N'{event[n]}',N'{event_level[n]}',N'{process[n]}',\
+        N'{processName[n]}',N'{clientID[n]}',N'{applicationName[n]}',N'{computerName[n]}',N'{connectID[n]}',\
+        N'{SessionID[n]}',N'{Usr[n]}',N'{exception[n]}',N'{descr[n]}',N'{Context[n]}')")
+
+    n += 1
 
 clear_array()
+
 pyodbc.pooling = False
