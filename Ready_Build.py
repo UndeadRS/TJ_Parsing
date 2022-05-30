@@ -229,6 +229,8 @@ def WaitConnections_forming():
 '''Формирование контекста'''
 def Context_forming():
     Context_finder = ''.join(re.findall('Context=\'(.*?)\'', pars_str))
+    Context_finder=re.sub('\$n\$','\n', Context_finder)
+    Context_finder=re.sub('\$t\$','\t', Context_finder)
     Context.append(Context_finder.strip("'"))
 
 '''Формирование описания Дедлока'''
