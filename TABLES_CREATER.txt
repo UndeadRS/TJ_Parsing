@@ -53,6 +53,25 @@ CREATE TABLE TDEADLOCK(
           deadlock_type     VARCHAR(50) NULL,
           deadlock_locks     VARCHAR(MAX) NULL,
           Context       VARCHAR(MAX) NULL)
+CREATE TABLE CALL(
+       EventID    int NOT NULL CONSTRAINT Call_EventID PRIMARY KEY IDENTITY,
+       event_datetime       DATETIME2,
+       duration       INT,
+       event        VARCHAR(20),
+       event_level     INT,
+       process         VARCHAR(20),
+       processName     VARCHAR(50) NULL,
+       clientID     INT NULL,
+       applicationName     VARCHAR(100) NULL,
+       computerName     VARCHAR(100) NULL,
+       connectID     INT NULL,
+       SessionID     INT NULL,
+       Usr     VARCHAR(100) NULL,
+       Func     VARCHAR(50) NULL,
+       Module    VARCHAR(200) NULL,
+       Method     VARCHAR(200) NULL,
+       Interface    VARCHAR(200) NULL,
+       Context     VARCHAR(MAX) NULL)
 CREATE TABLE ERR(
         EventID    int NOT NULL CONSTRAINT Err_EventID PRIMARY KEY IDENTITY,
         event_datetime       DATETIME2,
