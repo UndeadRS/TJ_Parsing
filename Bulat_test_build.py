@@ -76,7 +76,7 @@ Interface = []
 
 '''Предыдущий час в формате даты и строки'''
 last_hour_date = datetime.today() - timedelta(hours=1)
-last_hour_date_str = datetime.strftime(last_hour_date, '%y%m%d%H')
+# last_hour_date_str = datetime.strftime(last_hour_date, '%y%m%d%H')
 last_hour_date_str = '22032215'
 
 '''Поиск файлов ТЖ'''
@@ -358,3 +358,50 @@ def NOTLOCKS_Parsing():
     Context.clear()
 
 NOTLOCKS_Parsing()
+
+# '''Парсинг CALL'''
+# def CALL_Parsing():
+#     for one_path in TJ_CALL:
+#         ready_file = []
+#         open_file(one_path, ready_file)
+#
+#         for pars_str in ready_file:
+#             split_str = re.split(',', pars_str)
+#             time_duration = split_str[0]
+#
+#             date_forming(time_duration)
+#             duration_forming(time_duration)
+#             event_forming(split_str)
+#             eventlevel_forming(split_str)
+#             process_forming(pars_str)
+#             processName_forming(pars_str)
+#             clientID_forming(pars_str)
+#             applicationName_forming(pars_str)
+#             computerName_forming(pars_str)
+#             connectID_forming(pars_str)
+#             SessionID_forming(pars_str)
+#             Usr_forming(pars_str)
+#             Func_forming(pars_str)
+#             Module_forming(pars_str)
+#             Method_forming(pars_str)
+#             Interface_forming(pars_str)
+#             Context_forming(pars_str)
+#
+#     '''Выгрузка в СУБД'''
+#     len_string = len(event_datetime) - 1
+#     n = 0
+#
+#     while n <= len_string:
+#         dbCursor.execute(f"INSERT INTO CALL(event_datetime,duration,event,event_level,process,processName,clientID,\
+#                 applicationName,computerName,connectID,SessionID,Usr,Func,Module,Method,\
+#                 Interface,Context)\
+#                 VALUES (N'{event_datetime[n]}',N'{duration[n]}',N'{event[n]}',N'{event_level[n]}',N'{process[n]}',\
+#                 N'{processName[n]}',N'{clientID[n]}',N'{applicationName[n]}',N'{computerName[n]}',N'{connectID[n]}',\
+#                 N'{SessionID[n]}',N'{Usr[n]}',N'{Func[n]}',N'{Module[n]}',N'{Method[n]}',\
+#                 N'{Interface[n]}',N'{Context[n]}')")
+#         n += 1
+#
+#     pyodbc.pooling = False
+#
+#     '''Очистка массивов после выгрузки'''
+#     clear_array()
