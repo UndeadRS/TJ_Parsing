@@ -290,6 +290,10 @@ def planSQLText_forming(pars_str):
     planSQLText_finder=re.sub('\$n\$','\n', planSQLText_finder)
     planSQLText.append(planSQLText_finder.strip("'"))
 
+'''
+Процедуры парсинга
+'''
+
 '''Открытие файла и форматирование для парсинга'''
 def open_file(one_path, ready_file):
     file_open = open(one_path, encoding='utf-8')
@@ -312,9 +316,16 @@ def open_file(one_path, ready_file):
 
     file_open.close()
 
-'''
-Процедуры парсинга
-'''
+'''Добавить событие 'Context' в контекст ошибки'''
+def Context_replacing(len_string):
+    n = 0
+
+    while n <= len_string-1:
+
+        if event[n] != 'Context' and event[n+1] == 'Context' and SessionID[n] == SessionID[n+1]:
+            Context[n]=Context[n]+'$context$'+Context[n+1]
+
+        n += 1
 
 '''Формирование массивов блокировок'''
 def TJ_NOTLOCK_Pars():
@@ -346,6 +357,10 @@ def TJ_NOTLOCK_Pars():
 
     '''Выгрузка в СУБД блокировок'''
     len_string = len(event_datetime) - 1
+
+    Context_replacing(len_string)
+
+    '''Выгрузка в СУБД блокировок'''
     n = 0
 
     while n <= len_string:
@@ -405,16 +420,7 @@ def TJ_ERR_Pars():
 
     len_string = len(event_datetime) - 1
 
-    '''Добавить событие 'Context' в контекст ошибки'''
-    n = 0
-
-    while n <= len_string:
-
-        if event[n] == 'EXCP' and event[n+1] == 'Context' and SessionID[n] == SessionID[n+1]:
-            Context[n]=Context[n]+'$$$'+Context[n+1]
-
-        n += 1
-
+    Context_replacing(len_string)
 
     '''Выгрузка в СУБД ошибок'''
     n = 0
@@ -465,14 +471,7 @@ def TJ_MSSQL_Pars():
 
     len_string = len(event_datetime) - 1
 
-    '''Добавить событие 'Context' в контекст ошибки'''
-
-    n = 0
-
-    while n <= len_string-1:
-        if event[n] != 'Context' and event[n+1] == 'Context' and SessionID[n] == SessionID[n+1]:
-            Context[n]=Context[n]+'$context$'+Context[n+1]
-        n += 1
+    Context_replacing(len_string)
 
     '''Выгрузка в СУБД SQL-запросов'''
 
