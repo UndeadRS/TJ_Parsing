@@ -262,10 +262,10 @@ def descr_forming():
     else:
         descr_finder = ''.join(re.findall('Descr=(.*)', pars_str)).strip("'")
     # Приведение Descr в читаемый вид
-    descr_finder=re.sub(exception_finder_for_descr,'',descr_finder)
-    descr_finder=re.sub(r'(s|S)rc\\(\w*).cpp(\s|\(\w*\))','',descr_finder)
-    descr_finder=re.sub(r'descr=','',descr_finder)
-    descr_finder=re.sub(r'\:\:','',descr_finder).strip()
+    descr_finder = re.sub(exception_finder_for_descr, '', descr_finder)
+    descr_finder = re.sub('\$n\$', '\n', descr_finder)
+    descr_finder = re.sub('\$t\$', '\t', descr_finder)
+    descr_finder = re.sub(r'\:|\'|descr=\'|(s|S)rc\\(\w*).cpp(\s|\(\w*\))', '', descr_finder).strip()
     descr.append(descr_finder)
 
 def trans_forming():
