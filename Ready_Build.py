@@ -60,6 +60,14 @@ Method = []
 Interface = []
 exception = []
 descr = []
+trans=[]
+dbpid=[]
+rows=[]
+rowsAffected=[]
+sql=[]
+planSQLText=[]
+
+
 
 '''Предыдущий час в формате даты и строки: 22040515'''
 last_hour_date = datetime.today() - timedelta(hours=1)
@@ -127,6 +135,12 @@ def clear_array():
     deadlock_locks.clear()
     exception.clear()
     descr.clear()
+    trans.clear()
+    dbpid.clear()
+    rows.clear()
+    rowsAffected.clear()
+    sql.clear()
+    planSQLText.clear()
 
 '''Парсинг метрик'''
 def date_forming():
@@ -252,6 +266,31 @@ def descr_forming():
     descr_finder=re.sub(r'\:\:','',descr_finder).strip()
     descr.append(descr_finder)
 
+def trans_forming():
+    trans_finder = ''.join(re.findall('Trans=(.*?),', pars_str))
+    trans.append(trans_finder)
+
+def dbpid_forming():
+    dbpid_finder = ''.join(re.findall('dbpid=(.*?),', pars_str))
+    dbpid.append(dbpid_finder)
+
+def rows_forming():
+    rows_finder = ''.join(re.findall('Rows=(.*?),', pars_str))
+    rows.append(rows_finder)
+
+def rowsAffected_forming():
+    rowsAffected_finder = ''.join(re.findall('RowsAffected=(.*?),', pars_str))
+    rowsAffected.append(rowsAffected_finder)
+
+def sql_forming():
+    sql_finder = ''.join(re.findall('Sql=\'(.*?)\'', pars_str))
+    sql_finder=re.sub('\$n\$','\n', sql_finder)
+    sql.append(sql_finder.strip("'"))
+
+def planSQLText_forming():
+    planSQLText_finder = ''.join(re.findall('planSQLText=\'(.*?)\'', pars_str))
+    planSQLText_finder=re.sub('\$n\$','\n', planSQLText_finder)
+    planSQLText.append(planSQLText_finder.strip("'"))
 
 
 """Формирование массивов блокировок"""
@@ -260,7 +299,9 @@ for one_path in TJ_NOTLOCK:
 
         file_open = open(one_path, encoding='utf-8')
         file_read = file_open.read()
-        one_string = re.sub('\t*|\n*|\r*', '', file_read)
+        one_string = re.sub('\t','$t$', file_read)
+        one_string = re.sub('\r','$r$ ', one_string)
+        one_string = re.sub('\n','$n$', one_string)
         split_one_string = re.split("(\d{2}:\d+.\d*?-)", one_string)
         del split_one_string[0]
         len_string = len(split_one_string) - 1
@@ -336,7 +377,9 @@ clear_array()
 for one_path in TJ_ERR:
     file_open = open(one_path, encoding='utf-8')
     file_read = file_open.read()
-    one_string = re.sub('\t*|\n*|\r*', '', file_read)
+    one_string = re.sub('\t','$t$', file_read)
+    one_string = re.sub('\r','$r$ ', one_string)
+    one_string = re.sub('\n','$n$', one_string)
     split_one_string = re.split("(\d{2}:\d+.\d*?-)", one_string)
     del split_one_string[0]
     len_string = len(split_one_string) - 1
@@ -398,5 +441,81 @@ while n <= len_string:
     n += 1
 
 clear_array()
+
+
+"""Формирование массивов запросов СУБД"""
+for one_path in TJ_MSSQL:
+    file_open = open(one_path, encoding='utf-8')
+    file_read = file_open.read()
+    one_string = re.sub('\t','$t$', file_read)
+    one_string = re.sub('\r','$r$ ', one_string)
+    one_string = re.sub('\n','$n$', one_string)
+    split_one_string = re.split("(\d{2}:\d+.\d*?-)", one_string)
+    del split_one_string[0]
+    len_string = len(split_one_string) - 1
+
+    ready_file = []
+
+    n = 0
+
+    while n <= len_string:
+        if n == len_string:
+            ready_file.append(split_one_string[n])
+        else:
+            ready_file.append(split_one_string[n] + split_one_string[n + 1])
+        n += 2
+
+    for pars_str in ready_file:
+        split_str = re.split(',', pars_str)
+        time_duration = split_str[0]
+
+        """Формирование метрик для TJ_MSSQL"""
+        date_forming()
+        duration_forming()
+        event_forming()
+        eventlevel_forming()
+        process_forming()
+        processName_forming()
+        clientID_forming()
+        applicationName_forming()
+        computerName_forming()
+        connectID_forming()
+        SessionID_forming()
+        Usr_forming()
+        trans_forming()
+        dbpid_forming()
+        sql_forming()
+        rows_forming()
+        rowsAffected_forming()
+        Context_forming()
+        planSQLText_forming()
+    file_open.close()
+
+len_string = len(event_datetime) - 1
+
+"""Добавить событие 'Context' в контекст ошибки"""
+n=0
+while n <= len_string-1:
+    if event[n] != 'Context' and event[n+1] == 'Context' and SessionID[n] == SessionID[n+1]:
+        Context[n]=Context[n]+'$context$'+Context[n+1]
+    n += 1
+
+
+"""Выгрузка в СУБД SQL-запросов"""
+n=0
+while n <= len_string:
+
+    if event[n] != 'Context':
+        dbCursor.execute(f"INSERT INTO DBSQL(event_datetime,duration,event,event_level,process,processName,clientID,\
+        applicationName,computerName,connectID,SessionID,Usr,Trans,Dbpid,Sql,PlanSQLText,Rows,RowsAffected,Context)\
+        VALUES (N'{event_datetime[n]}',N'{duration[n]}',N'{event[n]}',N'{event_level[n]}',N'{process[n]}',\
+        N'{processName[n]}',N'{clientID[n]}',N'{applicationName[n]}',N'{computerName[n]}',N'{connectID[n]}',\
+         N'{SessionID[n]}',N'{Usr[n]}',N'{trans[n]}',N'{dbpid[n]}',N'{sql[n]}',N'{planSQLText[n]}',N'{rows[n]}',N'{rowsAffected[n]}',N'{Context[n]}')")
+
+    n += 1
+
+clear_array()
+
+
 
 pyodbc.pooling = False
