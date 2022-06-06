@@ -21,7 +21,7 @@ for pars_str in path_generator:
 '''Подключение к СУБД'''
 Server = 'SSQL'
 Database = 'SSQL_TJ'
-connectionString = 'Driver={ODBC Driver 17 for SQL Server};Server=' + Server + \
+connectionString = 'Driver={ODBC Driver 13 for SQL Server};Server=' + Server + \
                    ';Database=' + Database + ';Trusted_Connection=yes'
 connection = pyodbc.connect(connectionString, autocommit=True)
 dbCursor = connection.cursor()
@@ -207,6 +207,7 @@ def Usr_forming(pars_str):
 '''Формирование таблицы блокировки'''
 def Regions_forming(pars_str):
     Regions_finder = ''.join(re.findall('Regions=(.*?),', pars_str))
+    Regions_finder = re.sub(r'\"|\'','',Regions_finder)
     Regions.append(Regions_finder)
 
 '''Формирование полей блокировок'''
@@ -360,12 +361,11 @@ def TJ_NOTLOCK_Pars():
             Locks_forming(pars_str)
             WaitConnections_forming(pars_str)
             Context_forming(pars_str)
-
+    print(Regions)
     '''Выгрузка в СУБД блокировок'''
     len_string = len(event_datetime) - 1
 
     Context_replacing(len_string)
-
     '''Выгрузка в СУБД блокировок'''
     n = 0
 
@@ -503,5 +503,5 @@ TJ_ERR_Pars()
 TJ_MSSQL_Pars()
 
 logging.info("Script is finished")
-
+print('finish')
 pyodbc.pooling = False
