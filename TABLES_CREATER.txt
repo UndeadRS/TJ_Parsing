@@ -17,7 +17,7 @@ CREATE TABLE TLOCK(
        Regions     VARCHAR(200) NULL,
        lock_type  VARCHAR(20),
        Locks     VARCHAR(MAX) NULL,
-       WaitConnections    INT NULL,
+       WaitConnections    VARCHAR(100) NULL,
        Context     VARCHAR(MAX) NULL)
 CREATE TABLE TTIMEOUT(
        EventID    int NOT NULL CONSTRAINT Timeout_EventID PRIMARY KEY IDENTITY,
