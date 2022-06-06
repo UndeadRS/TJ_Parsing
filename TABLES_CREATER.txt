@@ -103,6 +103,10 @@ CREATE TABLE DBSQL(
         ConnectId     INT NULL,
         SessionId     INT NULL,
         Usr     VARCHAR(100) NULL,
-        Exception     VARCHAR(100) NULL,
-        Descr        VARCHAR(MAX) NULL,
+        Trans     INT NULL,
+        Dbpid     INT NULL,
+        Sql        VARCHAR(MAX) NULL,
+        PlanSQLText	VARCHAR(MAX) NULL,
+        Rows     INT NULL,
+        RowsAffected     INT NULL,
         Context       VARCHAR(MAX) NULL)
