@@ -2,6 +2,12 @@ import os
 import re
 import pyodbc
 from datetime import timedelta, datetime
+import logging
+
+'''Конфигурация логов'''
+logger = logging.getLogger('logger')
+logging.basicConfig(filename="I:\\Scripts\\python_script_log.txt", level=logging.DEBUG, format = "%(asctime)s - %(levelname)s - %(funcName)s: %(lineno)d - %(message)s)")
+logging.info("Script is started")
 
 '''Путь технологического журнала'''
 TJ_Path = r'G:\TJ_82'
@@ -495,5 +501,7 @@ def TJ_MSSQL_Pars():
 TJ_NOTLOCK_Pars()
 TJ_ERR_Pars()
 TJ_MSSQL_Pars()
+
+logging.info("Script is finished")
 
 pyodbc.pooling = False
