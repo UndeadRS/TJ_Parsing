@@ -32,7 +32,7 @@ CREATE TABLE TTIMEOUT(
        ConnectId     INT NULL,
        SessionId     INT NULL,
        Usr     VARCHAR(100) NULL,
-       WaitConnections     INT NULL,
+       WaitConnections    VARCHAR(100) NULL,
        Context     VARCHAR(MAX) NULL)
 CREATE TABLE TDEADLOCK(
          EventID    int NOT NULL CONSTRAINT Deadlock_EventID PRIMARY KEY IDENTITY,

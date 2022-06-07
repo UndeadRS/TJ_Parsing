@@ -2,6 +2,8 @@ import os
 import re
 import pyodbc
 from datetime import timedelta, datetime
+import logging
+
 
 '''Путь технологического журнала'''
 TJ_Path = r'D:\TJ\TJ_FULL'
@@ -11,6 +13,10 @@ tj_paths = []
 path_generator = os.walk(TJ_Path)
 for pars_str in path_generator:
     tj_paths.append(pars_str)
+
+logger = logging.getLogger('logger')
+logging.basicConfig(filename="D:\TJ\log.txt", level=logging.DEBUG, format = "%(asctime)s - %(levelname)s - %(funcName)s: %(lineno)d - %(message)s)")
+logging.info("Script is started")
 
 '''Подключение к СУБД'''
 Server = 'AINURKORS-PC'
@@ -23,7 +29,7 @@ dbCursor = connection.cursor()
 '''Предыдущий час в формате даты и строки: 22040515'''
 date = datetime.today() - timedelta(hours=1)
 date_s = datetime.strftime(date, '%y%m%d%H')
-date_s = '22222221'
+date_s= '22222221'
 
 '''Директории файлов событий'''
 TJ_CALL = []
@@ -496,5 +502,7 @@ def TJ_MSSQL_Pars():
 TJ_NOTLOCK_Pars()
 TJ_ERR_Pars()
 TJ_MSSQL_Pars()
+
+logging.info("Script is finished")
 
 pyodbc.pooling = False
