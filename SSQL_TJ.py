@@ -67,6 +67,7 @@ for address, dirs, files in tj_paths:
 
 '''Метрики'''
 event_datetime = []
+event_datetime_UTC = []
 duration = []
 event = []
 event_level = []
@@ -83,7 +84,6 @@ deadlock_session_1 = []
 deadlock_session_2 = []
 deadlock_region = []
 deadlock_type = []
-deadlock_locks = []
 Regions = []
 Locks = []
 lock_type = []
@@ -105,6 +105,7 @@ planSQLText=[]
 '''Очистка массивов'''
 def clear_array():
     event_datetime.clear()
+    event_datetime_UTC.clear()
     duration.clear()
     event.clear()
     event_level.clear()
@@ -130,7 +131,6 @@ def clear_array():
     deadlock_session_2.clear()
     deadlock_region.clear()
     deadlock_type.clear()
-    deadlock_locks.clear()
     exception.clear()
     descr.clear()
     trans.clear()
@@ -148,8 +148,11 @@ def clear_array():
 def date_forming(time_duration):
     pre_min_sec_mikrosec = ''.join(re.findall("(\d+:\d+.\d*?)-", time_duration))
     pre_year_mouth_day_hour = datetime.strftime(date, '%Y-%m-%d %H:')
+    pre_year_mouth_day_hour_UTC = (datetime).strftime((date+timedelta(hours=-3)), '%Y-%m-%d %H:')
     filedate = pre_year_mouth_day_hour + pre_min_sec_mikrosec
+    filedate_UTC =  pre_year_mouth_day_hour_UTC + pre_min_sec_mikrosec
     event_datetime.append(filedate)
+    event_datetime_UTC.append(filedate_UTC)
 
 '''Формирование длительности'''
 def duration_forming(time_duration):
@@ -244,13 +247,11 @@ def DeadlockConnectionIntersections_forming(pars_str):
         deadlock_session_2.append('')
         deadlock_region.append('')
         deadlock_type.append('')
-        deadlock_locks.append('')
     else:
         deadlock_session_1.append((re.split(' ',DeadlockConnectionIntersections_finder)[0]).strip("'"))
         deadlock_session_2.append((re.split(' ',DeadlockConnectionIntersections_finder)[1]).strip("'"))
         deadlock_region.append(re.split(' ',DeadlockConnectionIntersections_finder)[2])
         deadlock_type.append(re.split(' ',DeadlockConnectionIntersections_finder)[3])
-        deadlock_locks.append(re.split(' ',DeadlockConnectionIntersections_finder,maxsplit=4)[4])
 
 '''Формирование типа ошибки'''
 def exception_forming(pars_str):
@@ -372,27 +373,27 @@ def TJ_NOTLOCK_Pars():
     while n <= len_string:
 
         if event[n] == 'TLOCK':
-            dbCursor.execute(f"INSERT INTO TLOCK(event_datetime,duration,event,event_level,process,processName,\
+            dbCursor.execute(f"INSERT INTO TLOCK(event_datetime,event_datetime_UTC,duration,event,event_level,process,processName,\
             clientID,applicationName,computerName,connectID,SessionID,Usr,Regions,lock_type,Locks,\
             WaitConnections, Context)\
-            VALUES (N'{event_datetime[n]}',N'{duration[n]}',N'{event[n]}',N'{event_level[n]}',N'{process[n]}',\
+            VALUES (N'{event_datetime[n]}',N'{event_datetime_UTC[n]}',N'{duration[n]}',N'{event[n]}',N'{event_level[n]}',N'{process[n]}',\
             N'{processName[n]}',N'{clientID[n]}',N'{applicationName[n]}',N'{computerName[n]}',N'{connectID[n]}',\
             N'{SessionID[n]}',N'{Usr[n]}',N'{Regions[n]}',N'{lock_type[n]}',N'{Locks[n]}',\
             N'{WaitConnections[n]}',N'{Context[n]}')")
         elif event[n] == 'TTIMEOUT':
-            dbCursor.execute(f"INSERT INTO TTIMEOUT(event_datetime,event,event_level,process,processName,clientID,\
+            dbCursor.execute(f"INSERT INTO TTIMEOUT(event_datetime,event_datetime_UTC,event,event_level,process,processName,clientID,\
             applicationName,computerName,connectID,SessionID,Usr,WaitConnections,Context)\
-            VALUES (N'{event_datetime[n]}',N'{event[n]}',N'{event_level[n]}',N'{process[n]}',\
+            VALUES (N'{event_datetime[n]}',N'{event_datetime_UTC[n]}',N'{event[n]}',N'{event_level[n]}',N'{process[n]}',\
             N'{processName[n]}',N'{clientID[n]}',N'{applicationName[n]}',N'{computerName[n]}',N'{connectID[n]}',\
             N'{SessionID[n]}',N'{Usr[n]}',N'{WaitConnections[n]}',N'{Context[n]}')")
         elif event[n] == 'TDEADLOCK':
-            dbCursor.execute(f"INSERT INTO TDEADLOCK(event_datetime,event,event_level,process,processName,clientID,\
+            dbCursor.execute(f"INSERT INTO TDEADLOCK(event_datetime,event_datetime_UTC,event,event_level,process,processName,clientID,\
             applicationName,computerName,connectID,SessionID,Usr,deadlock_session_1,deadlock_session_2,\
-            deadlock_region,deadlock_type,deadlock_locks,Context)\
-            VALUES (N'{event_datetime[n]}',N'{event[n]}',N'{event_level[n]}',N'{process[n]}',\
+            deadlock_region,deadlock_type,Context)\
+            VALUES (N'{event_datetime[n]}',N'{event_datetime_UTC[n]}',N'{event[n]}',N'{event_level[n]}',N'{process[n]}',\
             N'{processName[n]}',N'{clientID[n]}',N'{applicationName[n]}',N'{computerName[n]}',N'{connectID[n]}',\
             N'{SessionID[n]}',N'{Usr[n]}',N'{deadlock_session_1[n]}',N'{deadlock_session_2[n]}',\
-            N'{deadlock_region[n]}',N'{deadlock_type[n]}',N'{deadlock_locks[n]}',N'{Context[n]}')")
+            N'{deadlock_region[n]}',N'{deadlock_type[n]}',N'{Context[n]}')")
 
         n += 1
 
@@ -434,9 +435,9 @@ def TJ_ERR_Pars():
     while n <= len_string:
 
         if event[n] != 'Context':
-            dbCursor.execute(f"INSERT INTO ERR(event_datetime,duration,event,event_level,process,processName,clientID,\
+            dbCursor.execute(f"INSERT INTO ERR(event_datetime,event_datetime_UTC,duration,event,event_level,process,processName,clientID,\
             applicationName,computerName,connectID,SessionID,Usr,Exception,Descr,Context)\
-            VALUES (N'{event_datetime[n]}',N'{duration[n]}',N'{event[n]}',N'{event_level[n]}',N'{process[n]}',\
+            VALUES (N'{event_datetime[n]}',N'{event_datetime_UTC[n]}',N'{duration[n]}',N'{event[n]}',N'{event_level[n]}',N'{process[n]}',\
             N'{processName[n]}',N'{clientID[n]}',N'{applicationName[n]}',N'{computerName[n]}',N'{connectID[n]}',\
             N'{SessionID[n]}',N'{Usr[n]}',N'{exception[n]}',N'{descr[n]}',N'{Context[n]}')")
 
@@ -486,10 +487,10 @@ def TJ_MSSQL_Pars():
     while n <= len_string:
 
         if event[n] != 'Context':
-            dbCursor.execute(f"INSERT INTO DBSQL(event_datetime,duration,event,event_level,process,processName,\
+            dbCursor.execute(f"INSERT INTO DBSQL(event_datetime,event_datetime_UTC,duration,event,event_level,process,processName,\
             clientID,applicationName,computerName,connectID,SessionID,Usr,Trans,Dbpid,Sql,PlanSQLText,Rows,\
             RowsAffected,Context)\
-            VALUES (N'{event_datetime[n]}',N'{duration[n]}',N'{event[n]}',N'{event_level[n]}',N'{process[n]}',\
+            VALUES (N'{event_datetime[n]}',N'{event_datetime_UTC[n]}',N'{duration[n]}',N'{event[n]}',N'{event_level[n]}',N'{process[n]}',\
             N'{processName[n]}',N'{clientID[n]}',N'{applicationName[n]}',N'{computerName[n]}',N'{connectID[n]}',\
             N'{SessionID[n]}',N'{Usr[n]}',N'{trans[n]}',N'{dbpid[n]}',N'{sql[n]}',N'{planSQLText[n]}',N'{rows[n]}',\
             N'{rowsAffected[n]}',N'{Context[n]}')")
